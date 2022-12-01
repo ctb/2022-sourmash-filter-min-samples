@@ -7,7 +7,7 @@ Supports the full range of sourmash output formats per
 
 https://sourmash.readthedocs.io/en/latest/command-line.html#choosing-signature-output-formats
 
-For integration into sourmash sig commonhash (?),
+For integration into sourmash sig commonhash or occurrence,
 * support full range of moltypes
 * support max samples, too
 """
