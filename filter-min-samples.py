@@ -1,4 +1,16 @@
 #! /usr/bin/env python
+"""
+Filter hashes in FracMinHash sketches for presence in minimum number of
+samples.
+
+Supports the full range of sourmash output formats per
+
+https://sourmash.readthedocs.io/en/latest/command-line.html#choosing-signature-output-formats
+
+For integration into sourmash sig commonhash (?),
+* support full range of moltypes
+* support max samples, too
+"""
 import sys
 import argparse
 import sourmash
@@ -18,14 +30,20 @@ def main():
 
     # first pass: count number of samples for each hash
     all_hashes = Counter()
+    n_signatures = 0
     for filename in args.sigfiles:
         db = sourmash.load_file_as_index(filename)
         db = db.select(ksize=args.ksize, moltype='DNA')
 
         for ss in db.signatures():
-            # note: count each hash only once, independent of abundance
+            # note: flatten => count each hash only once,
+            # independent of abundance
             flat_mh = ss.minhash.flatten()
             all_hashes.update(flat_mh.hashes)
+
+            n_signatures += 1
+
+    print(f"Loaded {len(all_hashes)} hashes from {n_signatures} sketches in {len(args.sigfiles)} files.")
 
     # find all hashes with abundance >= min_samples
     keep_hashes = set()
@@ -35,9 +53,7 @@ def main():
         if v >= min_samples:
             keep_hashes.add(hashval)
 
-    print(f"Loaded {len(args.sigfiles)} files.")
-
-    print(f'Of {len(all_hashes)} hashes, keeping {len(keep_hashes)} that are in more than {min_samples}')
+    print(f'Of {len(all_hashes)} hashes, keeping {len(keep_hashes)} that are in {min_samples} or more samples.')
 
     save_sigs = sourmash_args.SaveSignaturesToLocation(args.output)
     save_sigs.open()
@@ -52,6 +68,7 @@ def main():
             new_mh = mh.copy_and_clear()
             keep_these_hashes = keep_hashes.intersection(mh.hashes)
 
+            # retain abundance, if present; else just add hashes.
             if mh.track_abundance:
                 for hashval in keep_these_hashes:
                     abund = mh.hashes[hashval]
