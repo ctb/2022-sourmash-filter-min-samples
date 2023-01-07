@@ -20,23 +20,16 @@ from collections import Counter
 
 class Command_CommonHash:
     command = 'commonhash'
+    description = "filter hashes by min occurrence across sketches"
 
-    # @CTB make this into a dynamic attribute thingy
-    helpstring = f"sourmash scripts {command:16s} - filter hashes by min occurrence across all sketches"
-    
     def __init__(self, p):
-        print('XXX', self.helpstring)
         p.add_argument('sigfiles', nargs='+')
         p.add_argument('-k', '--ksize', default=31, type=int)
         p.add_argument('-o', '--output', required=True)
         p.add_argument('-m', '--min-samples', default=2, type=int)
 
-        # what to run!
-        p.set_defaults(func=self.cmd)
-
-    def cmd(self, args):
+    def main(self, args):
         return do_commonhash(args)
-
 
 
 def main():
