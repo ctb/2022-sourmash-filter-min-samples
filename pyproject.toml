@@ -1,0 +1,17 @@
+[project]
+name = "sourmash_plugin_commonhash"
+requires-python = ">=3.8"
+version = "0.1"
+
+[metadata]
+license = { text = "BSD 3-Clause License" }
+
+
+#[project.entry-points."sourmash.load_from"]
+#somewhat = "sourmash_plugin_example:load_somewhat"
+
+#[project.entry-points."sourmash.save_to"]
+#somewhat = "sourmash_plugin_example:SaveSignatures_Somewhat"
+
+[project.entry-points."sourmash.cli_script"]
+commonhash = "sourmash_plugin_commonhash:Command_CommonHash"
