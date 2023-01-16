@@ -14,21 +14,23 @@ For integration into sourmash sig commonhash or occurrence,
 import sys
 import argparse
 import sourmash
-from sourmash import sourmash_args
+from sourmash import sourmash_args, plugins
 from collections import Counter
 
 
-class Command_CommonHash:
+class Command_CommonHash(plugins.CommandLinePlugin):
     command = 'commonhash'
     description = "filter hashes by min occurrence across sketches"
 
     def __init__(self, p):
+        super().__init__(p)
         p.add_argument('sigfiles', nargs='+')
         p.add_argument('-k', '--ksize', default=31, type=int)
         p.add_argument('-o', '--output', required=True)
         p.add_argument('-m', '--min-samples', default=2, type=int)
 
     def main(self, args):
+        super().main(args)
         return do_commonhash(args)
 
 
